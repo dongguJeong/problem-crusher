@@ -9,7 +9,8 @@ const words = data
 	.map((line) => line.trim());
 
 // ----------------------------------------
-// Example usage of the findWord function
+// findWord 함수를 호출하여 결과를 출력함.
+// queries.csv 와 연결할 필요 있음.
 // console.log(findWord('WORDHERE'));
 // ----------------------------------------
 
@@ -17,10 +18,10 @@ const words = data
 // Function to find words that start with a given prefix
 function findWord(prefix: string): {
 	duration: number;
-	result: any[];
+	result: string[];
 } {
 	const startTime = performance.now();
-	const result: any[] = [];
+	const result: string[] = [];
 
 	// TODO: Implement the logic to find words that start with the given prefix
 
