@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { performance } from 'perf_hooks';
 
+console.log('Hello! 	This is the find_word project.');
 const data = fs.readFileSync(path.join(__dirname, '../input/test.csv'));
 const words = data
 	.toString()
