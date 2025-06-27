@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 function execute() {
-	const data = fs.readFileSync(path.join(__dirname, '../map/maze_100x100_1.txt'));
+	const data = fs.readFileSync(path.join(__dirname, '../map/maze_1000x1000_2.txt'));
 	const map = data.toString();
 	const startTime = performance.now();
 	const result = findPath(map);
@@ -23,20 +23,19 @@ class Coodinate{
 function findPath(map: any): string {
 	let result: string = '';
 	
-	// 1. 포탈 위치를 기록한다
-	const portalMap  : {[ key : string] : Coodinate[] } = {};
 
+	// 0. 데이터 준비
 	const data = map.trim().split('\n');
 	const Y = data.length ; 
 	const X = data[0].split(' ').filter((i : string) => i !== '').length;
 	let start : Coodinate = {y : 0, x : 0};
 	let end : Coodinate = {y : Y-1, x : X-1};
-	
 	const realmap = data.map((row : string) => row.split(' ').filter((i : string) => i !== ''));
 
+	// 1. 포탈 위치를 기록한다
+	const portalMap  : {[ key : string] : Coodinate[] } = {};
 	for(let y = 0 ;  y < Y ; y++){
 		for(let x = 0 ;  x < X ; x++){
-
 			 if(!isNaN(realmap[y][x])){
 				const key= realmap[y][x];
 				if(!portalMap[key]){
@@ -45,18 +44,24 @@ function findPath(map: any): string {
 				else{
 					portalMap[key].push(new Coodinate(y,x));
 				}
+			}else if(realmap[y][x] === '.S'){
+				start = new Coodinate(y,x)
+			}
+			else if(realmap[y][x] === '.E'){
+				end = new Coodinate(y,x)
 			}
 		}
 	}
 	
+	// 이동횟수 기록할 2차원 배열 준비
 	const record =new Array(Y);
-
 	for(let y = 0 ; y < Y ; y++){
 		record[y] = Array(Y).fill(Number.POSITIVE_INFINITY);
 	}
 	record[start.y][start.x] = 0;
 
 	
+	// bfs
 	const q : Coodinate[]= [];
 	q.push(start);
 
@@ -68,7 +73,6 @@ function findPath(map: any): string {
 		const curY = now.y;
 		const curX = now.x;
 
-		
 		if(curY === end.y && curX === end.x){
 			break;
 		}
@@ -103,7 +107,7 @@ function findPath(map: any): string {
 		result = 'NO'
 	}
 	else{
-		result = record[end.y][end.x] + ''
+		result = 'YES ' +  record[end.y][end.x] 
 	}
 	return result;
 
