@@ -52,8 +52,6 @@ async function main() {
 
     let command ;
     let difficulty : Difficulty = 'easy'
-    let startTime ;
-    
 
   try {
     while(true){
@@ -66,7 +64,8 @@ async function main() {
             console.log( '재시작 합니다. 난이도 : ' , difficulty )
         }
         makeMap(difficulty);
-        startTime = new Date();
+        showMap();
+        const startTime = new Date();
 
         while(true){
             command = await typeCommand();
@@ -86,15 +85,8 @@ async function main() {
             }
             else{
                 if(checkSuccess()){
-                    const playTime = Math.floor((new Date().valueOf() - startTime.valueOf()) / 1000) // 밀리초를 초로 변환
-                    let res ; 
-                    const hour = Math.floor(playTime / 3600)
-                    res = playTime % 3600;
-                    const minute = Math.floor(res / 60);
-                    res = res % 60;
-                    const second = Math.floor(res);
-
-                    console.log(`축하합니다! 플레이타임 ${hour} 시간 ${minute}분 ${second}초`    );
+                    const {minute, second} = calculateSuccessTime(startTime)
+                    console.log(`축하합니다! 플레이타임 ${minute}분 ${second}초`    );
                     showMap();
                     break;
                 }
@@ -150,6 +142,7 @@ main();
         }
     }
 
+    // 지도에 지뢰 추가하기
     for(let i = 0 ; i < mineCount ; i++){
         while(true){
             const xx = Math.floor((Math.random() * 100)) % width ;
@@ -178,8 +171,10 @@ main();
     }
 }   
 
+
 function showMap(){
 
+    // x 축 번호 출력
     console.log('남은 지뢰 : ' , mineCount);
     let line = '   ';
     for(let i = 0 ; i < width ; i++){
@@ -187,6 +182,8 @@ function showMap(){
     }
     console.log(line);
 
+    // 0 이면 빈 공간
+    // 숫자면 숫자 표시 
     for(let y = 0 ; y < height ; y++){
         let row =  y.toString().padStart(2,' ') + '|';
         for(let x = 0 ; x < width ; x++){
@@ -205,12 +202,14 @@ function showMap(){
 }
 
 function showAnswer(){
+    // x 축 번호 출력
     let line = '   ';
     for(let i = 0 ; i < width ; i++){
         line += i.toString().padStart(3, ' ');
     }
     console.log(line);
 
+    // 한 줄 씩 맵 출력
      for(let y = 0 ; y < height ; y++){
         let row =  y.toString().padStart(2,' ') + '|';
         for(let x = 0 ; x < width ; x++){
@@ -284,13 +283,12 @@ function clickMapItem(y : number, x: number){
         
     else if(map[y][x].nearMineCount === 0){
 
-        let visited = [];
+        const visited = [];
         for(let yy = 0 ; yy < height ; yy++){
             visited.push(new Array(width).fill(false));
         }
 
-
-        let q : {y: number, x: number}[]= [];
+        const q : {y: number, x: number}[]= [];
         q.push({y, x})
 
         while(q.length !== 0){
@@ -338,4 +336,14 @@ function checkSuccess(){
         }
     }
     return true;
+}
+
+function calculateSuccessTime(startTime : Date){
+    const playTime = Math.floor((new Date().valueOf() - startTime.valueOf()) / 1000) // 밀리초를 초로 변환
+    let res ; 
+    const minute = Math.floor(playTime / 60);
+    res = playTime % 60;
+    const second = Math.floor(res);
+
+    return {minute,second}
 }

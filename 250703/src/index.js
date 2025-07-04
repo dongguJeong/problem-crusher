@@ -46,7 +46,6 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let command;
         let difficulty = 'easy';
-        let startTime;
         try {
             while (true) {
                 if (command !== 'r') {
@@ -57,7 +56,8 @@ function main() {
                     console.log('재시작 합니다. 난이도 : ', difficulty);
                 }
                 makeMap(difficulty);
-                startTime = new Date();
+                showMap();
+                const startTime = new Date();
                 while (true) {
                     command = yield typeCommand();
                     console.clear();
@@ -75,14 +75,8 @@ function main() {
                     }
                     else {
                         if (checkSuccess()) {
-                            const playTime = Math.floor((new Date().valueOf() - startTime.valueOf()) / 1000); // 밀리초를 초로 변환
-                            let res;
-                            const hour = Math.floor(playTime / 3600);
-                            res = playTime % 3600;
-                            const minute = Math.floor(res / 60);
-                            res = res % 60;
-                            const second = Math.floor(res);
-                            console.log(`축하합니다! 플레이타임 ${hour} 시간 ${minute}분 ${second}초`);
+                            const { minute, second } = calculateSuccessTime(startTime);
+                            console.log(`축하합니다! 플레이타임 ${minute}분 ${second}초`);
                             showMap();
                             break;
                         }
@@ -113,12 +107,9 @@ function makeMap(difficulty) {
     map = [];
     mineArray = [];
     if (difficulty === 'easy') {
-        // width = 9;
-        // height = 9;
-        // mineCount = 10;
-        width = 3;
-        height = 3;
-        mineCount = 1;
+        width = 9;
+        height = 9;
+        mineCount = 10;
     }
     else if (difficulty === 'normal') {
         width = 16;
@@ -162,12 +153,15 @@ function makeMap(difficulty) {
     }
 }
 function showMap() {
+    // x 축 번호 출력
     console.log('남은 지뢰 : ', mineCount);
     let line = '   ';
     for (let i = 0; i < width; i++) {
         line += i.toString().padStart(3, ' ');
     }
     console.log(line);
+    // 0 이면 빈 공간
+    // 숫자면 숫자 표시 
     for (let y = 0; y < height; y++) {
         let row = y.toString().padStart(2, ' ') + '|';
         for (let x = 0; x < width; x++) {
@@ -185,11 +179,13 @@ function showMap() {
     }
 }
 function showAnswer() {
+    // x 축 번호 출력
     let line = '   ';
     for (let i = 0; i < width; i++) {
         line += i.toString().padStart(3, ' ');
     }
     console.log(line);
+    // 한 줄 씩 맵 출력
     for (let y = 0; y < height; y++) {
         let row = y.toString().padStart(2, ' ') + '|';
         for (let x = 0; x < width; x++) {
@@ -229,7 +225,7 @@ function typeCommand() {
                 return 'q';
             }
             else {
-                const res = yield clickMapItem(Number(one), Number(two));
+                const res = clickMapItem(Number(one), Number(two));
                 return res;
             }
         }
@@ -251,44 +247,42 @@ function retryGame() {
     });
 }
 function clickMapItem(y, x) {
-    return __awaiter(this, void 0, void 0, function* () {
-        map[y][x].isOpen = true;
-        if (map[y][x].isMine) {
-            return MINE;
+    map[y][x].isOpen = true;
+    if (map[y][x].isMine) {
+        return MINE;
+    }
+    else if (map[y][x].isFlag) {
+        return FLAG;
+    }
+    else if (map[y][x].nearMineCount === 0) {
+        const visited = [];
+        for (let yy = 0; yy < height; yy++) {
+            visited.push(new Array(width).fill(false));
         }
-        else if (map[y][x].isFlag) {
-            return FLAG;
-        }
-        else if (map[y][x].nearMineCount === 0) {
-            let visited = [];
-            for (let yy = 0; yy < height; yy++) {
-                visited.push(new Array(width).fill(false));
-            }
-            let q = [];
-            q.push({ y, x });
-            while (q.length !== 0) {
-                const now = q.shift();
-                const curY = now.y;
-                const curX = now.x;
-                for (let j = 0; j < 4; j++) {
-                    const ny = curY + dy[j];
-                    const nx = curX + dx[j];
-                    if (ny >= 0 && ny < height && nx >= 0 && nx < width && map[ny][nx].isMine === false && !visited[ny][nx]) {
-                        map[ny][nx].isOpen = true;
-                        visited[ny][nx] = true;
-                        if (map[ny][nx].nearMineCount === 0) {
-                            q.push({ y: ny, x: nx });
-                        }
+        const q = [];
+        q.push({ y, x });
+        while (q.length !== 0) {
+            const now = q.shift();
+            const curY = now.y;
+            const curX = now.x;
+            for (let j = 0; j < 4; j++) {
+                const ny = curY + dy[j];
+                const nx = curX + dx[j];
+                if (ny >= 0 && ny < height && nx >= 0 && nx < width && map[ny][nx].isMine === false && !visited[ny][nx]) {
+                    map[ny][nx].isOpen = true;
+                    visited[ny][nx] = true;
+                    if (map[ny][nx].nearMineCount === 0) {
+                        q.push({ y: ny, x: nx });
                     }
                 }
             }
-            return map[y][x].nearMineCount;
         }
-        else {
-            map[y][x].isOpen = true;
-            return map[y][x].nearMineCount;
-        }
-    });
+        return map[y][x].nearMineCount;
+    }
+    else {
+        map[y][x].isOpen = true;
+        return map[y][x].nearMineCount;
+    }
 }
 function flagMapItem(y, x) {
     map[y][x].toggleFlag();
@@ -311,4 +305,12 @@ function checkSuccess() {
         }
     }
     return true;
+}
+function calculateSuccessTime(startTime) {
+    const playTime = Math.floor((new Date().valueOf() - startTime.valueOf()) / 1000); // 밀리초를 초로 변환
+    let res;
+    const minute = Math.floor(playTime / 60);
+    res = playTime % 60;
+    const second = Math.floor(res);
+    return { minute, second };
 }

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "## 🎯 목표",
   "scripts": {
-		"build": "tsc",
-		"start": "npm run build && node src/index.js"
-	},
+    "build": "tsc",
+    "start": "npm run build && node src/index.js"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
