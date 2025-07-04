@@ -60,6 +60,7 @@ async function main() {
 
         if(command !== 'r'){
               difficulty = await selectDifficulty();
+              console.clear()
         }
         else if(command === 'r'){
             console.log( '재시작 합니다. 난이도 : ' , difficulty )
@@ -69,7 +70,8 @@ async function main() {
 
         while(true){
             command = await typeCommand();
-            
+            console.clear()
+
             if(command === MINE){
                 console.log('gameOver');
                 showAnswer();
@@ -84,7 +86,7 @@ async function main() {
             }
             else{
                 if(checkSuccess()){
-                    const playTime = new Date().valueOf() - startTime.valueOf() * 1000 // 밀리초를 초로 변환
+                    const playTime = Math.floor((new Date().valueOf() - startTime.valueOf()) / 1000) // 밀리초를 초로 변환
                     let res ; 
                     const hour = Math.floor(playTime / 3600)
                     res = playTime % 3600;
@@ -104,6 +106,7 @@ async function main() {
         }
         else{
             const retry = await retryGame()
+            console.clear()
             if(!retry) break;
         }
     }

@@ -51,14 +51,16 @@ function main() {
             while (true) {
                 if (command !== 'r') {
                     difficulty = yield selectDifficulty();
+                    console.clear();
                 }
                 else if (command === 'r') {
                     console.log('재시작 합니다. 난이도 : ', difficulty);
                 }
                 makeMap(difficulty);
-                startTime = performance.now();
+                startTime = new Date();
                 while (true) {
                     command = yield typeCommand();
+                    console.clear();
                     if (command === MINE) {
                         console.log('gameOver');
                         showAnswer();
@@ -73,7 +75,14 @@ function main() {
                     }
                     else {
                         if (checkSuccess()) {
-                            console.log('축하합니다! 플레이타임', performance.now() - startTime);
+                            const playTime = Math.floor((new Date().valueOf() - startTime.valueOf()) / 1000); // 밀리초를 초로 변환
+                            let res;
+                            const hour = Math.floor(playTime / 3600);
+                            res = playTime % 3600;
+                            const minute = Math.floor(res / 60);
+                            res = res % 60;
+                            const second = Math.floor(res);
+                            console.log(`축하합니다! 플레이타임 ${hour} 시간 ${minute}분 ${second}초`);
                             showMap();
                             break;
                         }
@@ -85,6 +94,7 @@ function main() {
                 }
                 else {
                     const retry = yield retryGame();
+                    console.clear();
                     if (!retry)
                         break;
                 }
