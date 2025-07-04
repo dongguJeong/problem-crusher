@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 function execute() {
-	const data = fs.readFileSync(path.join(__dirname, '../map/maze_100x100_5.txt'));
+	const data = fs.readFileSync(path.join(__dirname, '../map/maze_1000x1000_2.txt'));
 	const map = data.toString();
 	const startTime = performance.now();
 	const result = findPath(map);

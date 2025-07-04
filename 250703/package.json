@@ -1,0 +1,14 @@
+{
+  "name": "mine",
+  "version": "1.0.0",
+  "description": "## 🎯 목표",
+  "scripts": {
+		"build": "tsc",
+		"start": "npm run build && node src/index.js"
+	},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^24.0.10"
+  }
+}
