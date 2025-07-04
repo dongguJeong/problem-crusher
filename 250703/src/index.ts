@@ -126,12 +126,9 @@ main();
     mineArray = []
 
     if(difficulty === 'easy'){
-        // width = 9;
-        // height = 9;
-        // mineCount = 10;
-        width = 3;
-        height  = 3;
-        mineCount = 1
+        width = 9;
+        height = 9;
+        mineCount = 10;
     }
 
     else if(difficulty === 'normal'){
@@ -255,7 +252,7 @@ async function typeCommand(){
          return 'q';
     }
     else {
-        const res = await clickMapItem(Number(one),Number(two));
+        const res = clickMapItem(Number(one),Number(two));
         return res;
     }
    }
@@ -263,7 +260,6 @@ async function typeCommand(){
 
 async function retryGame(){
     while(true){
-
         const res = await askQuestion('다시 시작하시겠습니까? (y/n) : ');
         if(res === 'y'){
             return true;
@@ -273,11 +269,10 @@ async function retryGame(){
         }
         else console.log('y,n 둘 중 하나를 입력해주세요');
     }
-
 }
 
 
-async function clickMapItem(y : number, x: number){
+function clickMapItem(y : number, x: number){
     map[y][x].isOpen  = true;
     
     if(map[y][x].isMine){
