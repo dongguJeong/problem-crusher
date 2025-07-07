@@ -139,7 +139,6 @@ function makeMap(difficulty) {
             }
         }
     }
-    // 지뢰 주변의 칸들의 숫자를 1씩 증가시킨다
     for (let i = 0; i < mineCount; i++) {
         const curY = mineArray[i].y;
         const curX = mineArray[i].x;
@@ -153,15 +152,12 @@ function makeMap(difficulty) {
     }
 }
 function showMap() {
-    // x 축 번호 출력
     console.log('남은 지뢰 : ', mineCount);
     let line = '   ';
     for (let i = 0; i < width; i++) {
         line += i.toString().padStart(3, ' ');
     }
     console.log(line);
-    // 0 이면 빈 공간
-    // 숫자면 숫자 표시 
     for (let y = 0; y < height; y++) {
         let row = y.toString().padStart(2, ' ') + '|';
         for (let x = 0; x < width; x++) {
@@ -179,13 +175,11 @@ function showMap() {
     }
 }
 function showAnswer() {
-    // x 축 번호 출력
     let line = '   ';
     for (let i = 0; i < width; i++) {
         line += i.toString().padStart(3, ' ');
     }
     console.log(line);
-    // 한 줄 씩 맵 출력
     for (let y = 0; y < height; y++) {
         let row = y.toString().padStart(2, ' ') + '|';
         for (let x = 0; x < width; x++) {
@@ -307,10 +301,11 @@ function checkSuccess() {
     return true;
 }
 function calculateSuccessTime(startTime) {
-    const playTime = Math.floor((new Date().valueOf() - startTime.valueOf()) / 1000); // 밀리초를 초로 변환
+    const playTime = Math.floor((new Date().valueOf() - startTime.valueOf()) / 1000);
     let res;
     const minute = Math.floor(playTime / 60);
     res = playTime % 60;
     const second = Math.floor(res);
     return { minute, second };
 }
+//# sourceMappingURL=index.js.map
